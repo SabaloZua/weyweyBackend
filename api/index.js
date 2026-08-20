@@ -29,10 +29,14 @@ async function initialize() {
             const app = ignitor.createApp('web');
             await app.init();
             await app.boot();
-            const server = await app.container.make('server');
-            await server.boot();
-            server.setNodeServer(createServer(server.handle.bind(server)));
-            handler = server.handle.bind(server);
+            await app.start(async () => {
+                const { default: AppServiceProvider } = await import('@adonisjs/core/providers/app_provider');
+                new AppServiceProvider(app).register();
+                const server = await app.container.make('server');
+                await server.boot();
+                server.setNodeServer(createServer(server.handle.bind(server)));
+                handler = server.handle.bind(server);
+            });
         })();
     }
     await initialization;
