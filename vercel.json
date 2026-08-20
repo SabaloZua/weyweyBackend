@@ -1,15 +1,16 @@
 {
     "version":2,
+    "buildCommand":"node ace migration:run --force",
     "builds":[
         {
-        "src":"bin/server.js",
+        "src":"api/index.ts",
         "use":"@vercel/node"
         }
     ],
     "routes":[
         {
             "src":"/(.*)",
-            "dest":"bin/server.js"
+            "dest":"api/index.ts"
         }
     ]
 }
