@@ -6,6 +6,7 @@ var __rewriteRelativeImportExtension = (this && this.__rewriteRelativeImportExte
     }
     return path;
 };
+import { createServer } from 'node:http';
 import 'reflect-metadata';
 import { Ignitor } from '@adonisjs/core';
 const APP_ROOT = new URL('../', import.meta.url);
@@ -28,11 +29,10 @@ async function initialize() {
             const app = ignitor.createApp('web');
             await app.init();
             await app.boot();
-            await app.start(async () => {
-                const server = await app.container.make('server');
-                await server.boot();
-                handler = server.handle.bind(server);
-            });
+            const server = await app.container.make('server');
+            await server.boot();
+            server.setNodeServer(createServer(server.handle.bind(server)));
+            handler = server.handle.bind(server);
         })();
     }
     await initialization;
